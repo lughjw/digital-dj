@@ -75,6 +75,7 @@
     "webpack-merge": "4.2.2"
   },
   "devDependencies": {
+    "ajv-keywords": "^3.4.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-react": "^6.24.1",
