@@ -28,8 +28,9 @@ class Registration extends Component {
                 { withCredentials: true }
             )
             .then((response) => {
-                if(response.data.status === 'created'){
-                    this.props.handleSuccessfulAuth(response.data)
+                if (response.data.status === "created") {
+                    this.props.handleSuccessfulAuth(response.data);
+                    this.props.history.push("/");
                 }
             })
             .catch((error) => {

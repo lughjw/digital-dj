@@ -11,6 +11,13 @@ class Login extends Component {
         };
     }
 
+    handleSuccessfulAuth = (data) => {
+        this.props.handleLogin(data);
+        this.props.history.push("/");
+    };
+
+    
+
     handleSubmit = (event) => {
         event.preventDefault();
         const { email, password } = this.state;
@@ -27,7 +34,7 @@ class Login extends Component {
             )
             .then((response) => {
                 if(response.data.logged_in){
-                    this.props.handleSuccessfulAuth(response.data)
+                    this.handleSuccessfulAuth(response.data);
                 }
                 console.log("res from login", response);
             })

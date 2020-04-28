@@ -3,6 +3,8 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import axios from "axios";
 import Home from "./Home";
 import Dashboard from "./Dashboard";
+import NavBar from "./NavBar";
+import Login from "./auth/Login";
 
 export default class App extends Component {
     constructor() {
@@ -53,16 +55,27 @@ export default class App extends Component {
     };
 
     handleLogout = () => {
-        this.setState({
-            loggedInStatus: "NOT_LOGGED_IN",
-            user: {},
-        });
+        axios
+            .delete("http://localhost:4000/logout", { withCredentials: true })
+            .then((response) => {
+                this.setState({
+                    loggedInStatus: "NOT_LOGGED_IN",
+                    user: {},
+                });
+            })
+            .catch((error) => {
+                console.log("logout error", error);
+            });
     };
 
     render() {
         return (
             <div className="app">
                 <BrowserRouter>
+                    <NavBar
+                        handleLogout={this.handleLogout}
+                        loggedInStatus={this.state.loggedInStatus}
+                    />
                     <Switch>
                         <Route
                             exact
@@ -70,8 +83,19 @@ export default class App extends Component {
                             render={(props) => (
                                 <Home
                                     {...props}
+                                    user={this.state.user}
+                                    loggedInStatus={this.state.loggedInStatus}
+                                    handleLogin = {this.handleLogin}
+                                />
+                            )}
+                        />
+                        <Route
+                            exact
+                            path={"/login"}
+                            render={(props) => (
+                                <Login
+                                    {...props}
                                     handleLogin={this.handleLogin}
-                                    handleLogout={this.handleLogout}
                                     loggedInStatus={this.state.loggedInStatus}
                                 />
                             )}
