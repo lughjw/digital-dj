@@ -5,6 +5,12 @@ import Home from "./Home";
 import Dashboard from "./Dashboard";
 import NavBar from "./NavBar";
 import Login from "./auth/Login";
+import Spotify from "../Spotify";
+import PlaylistContainer from "./PlaylistContainer";
+import Player from "./Player";
+import Callback from "./Callback"
+
+// Collects the token when returning back from the spotify auth.
 
 export default class App extends Component {
     constructor() {
@@ -45,6 +51,14 @@ export default class App extends Component {
 
     componentDidMount() {
         this.checkLoginStatus();
+        // Set spotify token
+        let _token = Spotify.userAccessToken.access_token;
+        console.log("token: ", Spotify.userAccessToken);
+        if (_token) {
+            this.setState({
+                token: _token,
+            });
+        }
     }
 
     handleLogin = (data) => {
@@ -85,7 +99,7 @@ export default class App extends Component {
                                     {...props}
                                     user={this.state.user}
                                     loggedInStatus={this.state.loggedInStatus}
-                                    handleLogin = {this.handleLogin}
+                                    handleLogin={this.handleLogin}
                                 />
                             )}
                         />
@@ -110,8 +124,18 @@ export default class App extends Component {
                                 />
                             )}
                         />
+                        <Route
+                            exact
+                            path={"/playlists"}
+                            render={(props) => <PlaylistContainer {...props} />}
+                        />
+                        <Route
+                            path={"/callback"}
+                            render={(props) => <Callback {...props} />}
+                        />
                     </Switch>
                 </BrowserRouter>
+                <Player />
             </div>
         );
     }
