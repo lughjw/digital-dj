@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch, Route, useHistory } from "react-router-dom";
 import axios from "axios";
 import Home from "./Home";
 import Dashboard from "./Dashboard";
@@ -8,7 +8,9 @@ import Login from "./auth/Login";
 import Spotify from "../Spotify";
 import PlaylistContainer from "./PlaylistContainer";
 import Player from "./Player";
-import Callback from "./Callback"
+import Callback from "./Callback";
+import API from "../API";
+import Cookie from 'react-cookies'
 
 // Collects the token when returning back from the spotify auth.
 
@@ -23,19 +25,22 @@ export default class App extends Component {
     }
 
     checkLoginStatus = () => {
-        axios
-            .get("http://localhost:4000/logged_in", { withCredentials: true })
+        // API.getLoggedIn();
+        // console.log(token)
+        fetch(`http://localhost:4000/logged_in`, {withCredentials: true})
+            .then((r) => r.json())
             .then((response) => {
+                console.log("login status", response);
                 if (
-                    response.data.logged_in &&
+                    response.logged_in &&
                     this.state.loggedInStatus === "NOT_LOGGED_IN"
                 ) {
                     this.setState({
                         loggedInStatus: "LOGGED_IN",
-                        user: response.data.user,
+                        user: response.user,
                     });
                 } else if (
-                    !response.data.logged_in &&
+                    !response.logged_in &&
                     this.state.loggedInStatus === "LOGGED_IN"
                 ) {
                     this.setState({
@@ -47,21 +52,60 @@ export default class App extends Component {
             .catch((error) => {
                 console.log("check login error", error);
             });
+        {
+            // axios
+            //     .get("http://localhost:4000/logged_in", {withCredentials: true})
+            //     .then((response) => {
+            //         if (
+            //             response.data.logged_in &&
+            //             this.state.loggedInStatus === "NOT_LOGGED_IN"
+            //         ) {
+            //             this.setState({
+            //                 loggedInStatus: "LOGGED_IN",
+            //                 user: response.data.user,
+            //             });
+            //         } else if (
+            //             !response.data.logged_in &&
+            //             this.state.loggedInStatus === "LOGGED_IN"
+            //         ) {
+            //             this.setState({
+            //                 loggedInStatus: "NOT_LOGGED_IN",
+            //                 user: {},
+            //             });
+            //         }
+            //     })
+            //     .catch((error) => {
+            //         console.log("check login error", error);
+            //     });
+        }
     };
 
+    // getCookie = () => {
+        
+    //     console.log("Getting cookie")
+    //     let cookie = document.cookie.replace(/(?:(?:^|.*;\s*)_digital_dj_api_session\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+    //     console.log("_digital_dj_api_session_cookie", cookie)
+    //     return cookie
+    // }
+
     componentDidMount() {
-        this.checkLoginStatus();
+        // console.log("Mounting app")
+        // let token=this.getCookie();
+        // console.log("token",token)
+        // if(token) 
+        // this.checkLoginStatus();
         // Set spotify token
-        let _token = Spotify.userAccessToken.access_token;
-        console.log("token: ", Spotify.userAccessToken);
-        if (_token) {
-            this.setState({
-                token: _token,
-            });
-        }
+        // let _token = Spotify.userAccessToken.access_token;
+        // console.log("token: ", Spotify.userAccessToken);
+        // if (_token) {
+        //     this.setState({
+        //         token: _token,
+        //     });
+        // }
     }
 
     handleLogin = (data) => {
+        console.log("Setting User")
         this.setState({
             loggedInStatus: "LOGGED_IN",
             user: data.user,
@@ -125,7 +169,6 @@ export default class App extends Component {
                             )}
                         />
                         <Route
-                            exact
                             path={"/playlists"}
                             render={(props) => <PlaylistContainer {...props} />}
                         />
@@ -135,7 +178,7 @@ export default class App extends Component {
                         />
                     </Switch>
                 </BrowserRouter>
-                <Player />
+                {/* <Player /> */}
             </div>
         );
     }

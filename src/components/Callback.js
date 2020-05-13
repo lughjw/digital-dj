@@ -6,7 +6,8 @@ Spotify.collectAccessToken();
 class Callback extends Component {
     
     render() {
-        return <div>{console.log(this.props)}</div>
+        return <div></div>
+        // return <div>{console.log(this.props)}</div>
     }
 }
 

@@ -1,4 +1,5 @@
 import axios from "axios";
+import API from "./API";
 
 // hash = window.location.hash
 //         .substring(1)
@@ -18,7 +19,13 @@ export default class Spotify {
     static clientId = "dc03dc596dd24a0383323b67685ece79";
 
     static redirectUri = "http://localhost:3000/callback";
-    static scopes = ["user-read-currently-playing", "user-read-playback-state"];
+    static scopes = [
+        'user-read-email',
+        'playlist-read-collaborative',
+        'playlist-read-private',
+        'playlist-modify-private',
+        'playlist-modify-public',
+    ];
 
     static authorizeLink = `https://accounts.spotify.com/authorize?client_id=${
         Spotify.clientId
@@ -40,6 +47,13 @@ export default class Spotify {
                 return initial;
             }, {});
 
-        // window.location.hash = "";
+        // // API.getOrCreateUser(Spotify.userAccessToken);
+        //     fetch("http://localhost:4000/auth/spotify/callback",{
+        //         method: "POST",
+        //         headers: {"Content-Type":"application/json","Accepts":"application/json"},
+        //         body: JSON.stringify(Spotify.userAccessToken)
+        //     }).then(resp => resp.json())
+        //     .then(json => console.log(json))
+        // // window.location.hash = "";
     }
 }

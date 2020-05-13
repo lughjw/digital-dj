@@ -5,7 +5,14 @@ class NavBar extends Component {
     render() {
         return (
             <nav className="navbar">
-                <Link className="nav-link" to="/">Home</Link>
+                <Link className="nav-link" to="/">
+                    Home
+                </Link>
+                {/* <ul className="nav-links">
+                    <Link className="nav-link" to="/playlists">
+                        Playlists
+                    </Link>
+                </ul> */}
                 {this.props.loggedInStatus === "LOGGED_IN"? (
                     <ul className="nav-links">
                         <Link className="nav-link" to="/user/settings">Settings</Link>
