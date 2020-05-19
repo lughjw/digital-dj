@@ -2,58 +2,57 @@ import React, { Component } from "react";
 import Playlist from "./Playlist";
 import { Link } from "react-router-dom";
 import NewPlaylist from "./NewPlaylist";
+import API from "../API";
 
 class PlaylistContainer extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            newPlaylistName: "",
             playlists: [],
             selectedPlaylist: null,
         };
     }
 
-    handleDeletePlaylistTrack = (playlistId, trackId) => {
-        console.log(`playlistId: ${playlistId}, trackId: ${trackId}`);
-        // if (
-        //     this.state.selectedPlaylist &&
-        //     playlistId === this.state.selectedPlaylist.id
-        // ) {
-        //     this.setState({
-        //         selectedPlaylist: null,
-        //         playlists: this.state.playlists.filter(
-        //             (playlist) => playlistId !== playlist.id
-        //         ),
-        //     });
-        // } else {
-        //     this.setState({
-        //         playlists: this.state.playlists.filter(
-        //             (playlist) => playlistId !== playlist.id
-        //         ),
-        //     });
-        // }
-
-        // fetch(`http://localhost:4000/playlists/${playlistId}/tracks/${}`, {
-        //     method: "delete",
-        //     headers: {}
-        // })
-        // .then(resp => console.log(resp))
-    };
-
-    handleCreatePlaylist = event => {
+    handleCreatePlaylist = (event) => {
         // console.log(event.target.playlistName.value)
         event.preventDefault();
         // push to server
         fetch("http://localhost:4000/playlists", {
             method: "POST",
             headers: {
-                "Content-Type" : "application/json"
+                "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                name: event.target.playlistName.value
+                name: this.state.newPlaylistName,
+            }),
+        })
+        .then((r) => r.json())
+        .then((newPlaylist) =>
+            this.setState({
+                newPlaylistName: "",
+                playlists: [newPlaylist, ...this.state.playlists],
+            })
+        );
+            
+        event.target.reset();
+    };
+
+    handleDeletePlaylist = playlistId => {
+        // API.deletePlaylist()
+        fetch(`http://localhost:4000/playlists/${playlistId}`, {
+            method: "DELETE"
+        })
+        .then((resp) => {
+            console.log(resp)
+            this.setState({
+                playlists: this.state.playlists.filter(playlist => playlist.id !== playlistId),
+                selectedPlaylist: this.state.selectedPlaylist && 
+                    (this.state.selectedPlaylist.id === playlistId) ? 
+                    null : 
+                    this.state.selectedPlaylist,
             })
         })
-        .then(r => r.json())
-        .then(resp => console.log(resp))
     }
 
     componentDidMount() {
@@ -73,26 +72,34 @@ class PlaylistContainer extends Component {
                         {...this.props}
                         key={this.state.selectedPlaylist["id"]}
                         playlist={this.state.selectedPlaylist}
-                        handleDeletePlaylistTrack={
-                            this.handleDeletePlaylistTrack
-                        }
+                        handleDeletePlaylist={this.handleDeletePlaylist}
                     />
                 ) : (
                     <div>
                         <form onSubmit={this.handleCreatePlaylist}>
-                            <input name='playlistName' type="text" />
+                            <input
+                                onChange={(e) =>
+                                    this.setState({
+                                        newPlaylistName: e.target.value,
+                                    })
+                                }
+                                name="playlistName"
+                                type="text"
+                            />
                             <input type="submit" value="Create Playlist" />
                         </form>
                         {this.state.playlists.map((playlist) => (
-                            <div
-                                key={playlist.id}
-                                onClick={() =>
-                                    this.setState({
-                                        selectedPlaylist: playlist,
-                                    })
-                                }
-                            >
-                                {playlist.name}
+                            <div className="playlistBrief" key={playlist.id}>
+                                <div
+                                    onClick={() =>
+                                        this.setState({
+                                            selectedPlaylist: playlist,
+                                        })
+                                    }
+                                >
+                                    {playlist.name}
+                                </div>
+                                <button onClick={() => this.handleDeletePlaylist(playlist.id)}>Delete Playlist</button>
                             </div>
                         ))}
                     </div>

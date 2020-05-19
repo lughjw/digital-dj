@@ -5,8 +5,7 @@ import axios from "axios";
 import logo from "./logo.svg";
 import Spotify from "../Spotify";
 import API from "../API"
-// import Cookies from "js-cookie"
-import cookie from 'react-cookies'
+
 
 class Home extends Component {
     constructor(props) {
@@ -17,12 +16,14 @@ class Home extends Component {
         };
     }
 
+    handleLogin = (event) => {
+        window.location = "http://localhost:4000/login";
+    };
+
     handleSuccessfulAuth = (data, accessToken) => {
-        // console.log("setting cookie")
-        // document.cookie = `access_token=${accessToken}`;
-        // console.log("set cookie ",document.cookie)
-        // Cookies.set('access_token', accessToken)
-        console.log("session_id cookie", cookie.loadAll())
+        console.log("setting cookie")
+        document.cookie = `access_token=${accessToken}`;
+        console.log("set cookie ",document.cookie)
         this.props.handleLogin(data);
     };
 
@@ -31,7 +32,6 @@ class Home extends Component {
         let accessToken = new URL(window.location.href).searchParams.get(
             "access_token"
         );
-        // console.log("cookies ", document.cookie)
         console.log("accessToken", accessToken)
         if (accessToken !== null) {
             this.setState({ spotifyToken: accessToken });

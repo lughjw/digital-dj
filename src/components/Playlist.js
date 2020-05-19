@@ -15,12 +15,14 @@ class Playlist extends Component {
     */
 
     handleDeleteTrack = trackId => {
-        console.log(`playlistId: ${this.props.playlist.id}, trackId: ${trackId}`);
+        // console.log("playlist: ", this.props.playlist)
+        // console.log(`playlistId: ${this.props.playlist.id}, trackId: ${trackId}`);
+
+        let song = this.state.playlistTracksObj.items.find(trackObj => trackObj.track.id === trackId)
+        // console.log("track", song)
 
         let playlistTracksObj = this.state.playlistTracksObj;
-        
         playlistTracksObj.items = this.state.playlistTracksObj.items.filter(trackObj => trackObj.track.id !== trackId);
-
         this.setState({ playlistTracksObj })
 
         fetch(`http://localhost:4000/playlists/${this.props.playlist.id}/tracks/${trackId}`, {
@@ -29,6 +31,7 @@ class Playlist extends Component {
                 'Content-Type': 'application/json'
             }
         })
+        .then(resp => resp.json())
         .then(resp => console.log(resp))
     };
 
@@ -51,12 +54,13 @@ class Playlist extends Component {
             <div>
                 <h2>
                     {this.props.playlist.name}
+                    <button className="del-btn" onClick={() => this.props.handleDeletePlaylist(this.props.playlist.id)}></button>
                 </h2>
 
                 {this.state.playlistTracksObj ? (
                     <ul>
                         {this.state.playlistTracksObj.items.map((trackObj) => (
-                            <li key={trackObj.track.id}>
+                            <li className="track" key={trackObj.track.id}>
                                 {trackObj.track.name}<button onClick={() => this.handleDeleteTrack(trackObj.track.id)}>Delete</button>
                             </li>
                         ))}

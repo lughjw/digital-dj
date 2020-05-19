@@ -24,7 +24,7 @@ export default class API{
      * @param {string} song The id of the song to be added (do a search first to find it.)
      */
     static addSongToPlaylist(userId, playlistId, songId) {
-        axios.post(BASE_URL + `/${user.id}/playlists/${playlist}`, song)
+        axios.post(BASE_URL + `/${userId}/playlists/${playlistId}`, songId)
         .then(r => r.json())
         .then(r => console.log("Response from addPlaylistToUser",r))
     };
@@ -35,9 +35,10 @@ export default class API{
      */
     static spotifyLogin() {
         // should respond with the verified user's token or user_id.
-        axios.get(this.BASE_URL + "/login")
-        .then(r => r.json())
-        .then(r => console.log("Response from spotifyLogin",r))
+        return axios.get(this.BASE_URL + "/login")
+        // .then(r => r.json())
+        // .then(r => console.log("Response from spotifyLogin",r))
+        // fetch(this.BASE_URL + "/login")
     };
 
     /**
@@ -45,7 +46,7 @@ export default class API{
      * @param {string} spotifyToken 
      */
     static createSession(spotifyToken) {
-        return fetch(this.BASE_URL + "/sessions/create?spotify_token="+spotifyToken,{withCredentials: true})
+        return fetch(this.BASE_URL + "/sessions/create?spotify_token="+spotifyToken)
     }
 
     /**
